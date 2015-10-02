@@ -1,7 +1,23 @@
 # gamblerscan
 
-PYTHON SCANNER FOR OPEN PORTS (1..1024)
+#### Python scanner for open ports (1..1024)
 
-[+] - Usage: python scan.py host
-[+] - Example:
+## Install
+
+Just it:
+
+```
+$ git clone https://github.com/mthbernardes/gamblerscan
+```
+
+## Usage
+
+```
+$ python scan.py host
+```
+
+Example:
+
+```
 python gamblerscan.py www.facebook.com
+```
