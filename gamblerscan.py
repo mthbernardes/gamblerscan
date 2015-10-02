@@ -1,13 +1,5 @@
 #!/usr/bin/python
-import socket,sys
-
-#Param parser
-if len(sys.argv) < 2:
-        print '[+] - Syntax Error'
-        print '[+] - Usage: python '+sys.argv[0]+' host'
-        print '[+] - Example:'
-        print 'python '+sys.argv[0]+' www.facebook.com'
-        exit()
+import socket,sys,argparse
 
 #Host resolve function
 def resolve(host):
@@ -30,19 +22,27 @@ def scanner(address):
 			c = c + 1
 	return c
 
-#Variables
-dominio = sys.argv[1]
-count = 0
-#Main
-try:
-	ip = resolve(dominio)
-
-	print '[+] - Checking %s / %s'%(dominio,ip)
-	count = scanner(ip)
-	print '[+] - Found',count,'open doors'
-	print '[+] - Completed successfully'
-
-except KeyboardInterrupt:
-	print
-        print '[+] - Interrupted scan'
-	print '[+] - Was found',count,'open doors before finish it'
+if __name__ == "__main__":
+	#Parser section
+	parser = argparse.ArgumentParser()
+	parser.add_argument("host",help="host to check doors")
+	parser.add_argument("-m","--min",help="Port to start check",type=int)
+	parser.add_argument("-M","--max",help="Port to finish check",type=int)
+	args = parser.parse_args()
+	
+	#Variables
+	count = 0
+	
+	#Main
+	try:
+		ip = resolve(args.host)
+	
+		print '[+] - Checking %s / %s'%(args.host,ip)
+		count = scanner(ip)
+		print '[+] - Found',count,'open doors'
+		print '[+] - Completed successfully'
+	
+	except KeyboardInterrupt:
+		print
+	        print '[+] - Interrupted scan'
+		print '[+] - Was found',count,'open doors before finish it'
