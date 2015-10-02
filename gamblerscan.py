@@ -10,9 +10,14 @@ def resolve(host):
 		print '[+] - Address resolve isn\'t possible'
 		exit()
 #Port scan function
-def scanner(address):
+def scanner(address,start,end):
 	c = 0
-	for port in range(1,1024):
+	
+	if start >= end:
+		print "Please, insert corret values"
+		exit()
+	
+	for port in range(start,end):
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.settimeout(1)
 		r = s.connect_ex((address,port))
@@ -32,13 +37,22 @@ if __name__ == "__main__":
 	
 	#Variables
 	count = 0
+	start = 1
+	end   = 1024
 	
 	#Main
 	try:
 		ip = resolve(args.host)
 	
 		print '[+] - Checking %s / %s'%(args.host,ip)
-		count = scanner(ip)
+		
+		if args.min:
+			start = args.min
+		if args.max:
+			end = args.max
+			
+		count = scanner(ip,start,end)
+		
 		print '[+] - Found',count,'open doors'
 		print '[+] - Completed successfully'
 	
