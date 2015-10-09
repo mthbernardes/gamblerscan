@@ -1,48 +1,62 @@
 #!/usr/bin/python
-import socket,sys
+import socket,sys,argparse
 
-#Checagem parametros
-if len(sys.argv) < 2:
-        print '[+] - Syntax Error'
-        print '[+] - Usage: python '+sys.argv[0]+' host'
-        print '[+] - Example:'
-        print 'python '+sys.argv[0]+' www.facebook.com'
-        exit()
-
-#Funcao resolve host
+#Host resolve function
 def resolve(host):
 	try:
 		address = socket.gethostbyname(host)
 		return address
 	except:
-		print '[+] - Impossivel resolver endereco'
+		print '[+] - Address resolve isn\'t possible'
 		exit()
-#Funcao scanner de portas
-def scanner(address):
+#Port scan function
+def scanner(address,start,end):
 	c = 0
-	for port in range(1,1024):
+	
+	if start >= end:
+		print "Please, insert corret values"
+		exit()
+	
+	for port in range(start,end):
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		s.settimeout(1)
 		r = s.connect_ex((address,port))
 		s.close()
 		if r == 0:
-			print '[+] - Porta',port,'aberta'
+			print '[+] - Port',port,'is open'
 			c = c + 1
 	return c
 
-#Declaracao variaveis
-dominio = sys.argv[1]
-count = 0
-#Main
-try:
-	ip = resolve(dominio)
-
-	print '[+] - Executando varredura em %s / %s'%(dominio,ip)
-	count = scanner(ip)
-	print '[+] - Foram encontradas',count,'portas abertas'
-	print '[+] - Execucao concluida com sucesso'
-
-except KeyboardInterrupt:
-	print
-        print "[+] - Scaneamento Interrompido"
-	print '[+] - Foram encontradas',count,'portas abertas antes da finalizacao do processo'
+if __name__ == "__main__":
+	#Parser section
+	parser = argparse.ArgumentParser()
+	parser.add_argument("host",help="host to check doors")
+	parser.add_argument("-m","--min",help="Port to start check",type=int)
+	parser.add_argument("-M","--max",help="Port to finish check",type=int)
+	args = parser.parse_args()
+	
+	#Variables
+	count = 0
+	start = 1
+	end   = 1024
+	
+	#Main
+	try:
+		ip = resolve(args.host)
+	
+		print '[+] - Checking %s / %s'%(args.host,ip)
+		
+		if args.min:
+			start = args.min
+		if args.max:
+			end = args.max
+			
+		count = scanner(ip,start,end)
+		
+		print '[+] - Found',count,'open doors'
+		print '[+] - Completed successfully'
+	
+	except KeyboardInterrupt:
+		print
+	        print '[+] - Interrupted scan'
+		print '[+] - Was found',count,'open doors before finish it'
